@@ -18,7 +18,7 @@ async def send_camera_feed(websocket, path):
             await websocket.send(jpg_bytes)
             
             # Wait for 1 second before sending the next frame
-            await asyncio.sleep(1)
+            # await asyncio.sleep(1)
         else:
             print("Camera disconnected.")
             break

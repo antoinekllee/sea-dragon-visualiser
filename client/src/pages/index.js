@@ -31,7 +31,7 @@ const IndexPage = () =>
             reader.onloadend = function() 
             {
                 const base64data = reader.result.split(",")[1];
-                const data = 'data:image/jpeg;base64,' + base64data;
+                const data = 'data:image/jpeg;base64,' + atob(base64data);
                 console.log (data);
                 imageRef.current.src = data; 
             };
