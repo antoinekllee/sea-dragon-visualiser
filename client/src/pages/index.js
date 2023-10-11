@@ -1,4 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import Streamer from "../components/streamer";
+import SphereRotation from "../components/SphereRotation";
 
 const pageStyles = {
     color: "#232129",
@@ -13,55 +15,29 @@ const headingStyles = {
 
 const IndexPage = () => 
 {
-    const imageRef = useRef(null);
+    const [yaw, setYaw] = useState(0);
+    const [pitch, setPitch] = useState(0);
+    const [roll, setRoll] = useState(0);
 
     useEffect(() => {
-        const ws = new WebSocket('ws://localhost:8765');
-    
-        ws.onopen = () => {
-            console.log('Connected to the WebSocket server.');
-        }
-    
-        ws.binaryType = 'blob';
+        const yawIncrement = 1;
+        const pitchIncrement = 2;
+        const rollIncrement = 3;
 
-        ws.onmessage = function(event) {
-            const blob = event.data;
-            const reader = new FileReader();
-    
-            reader.onloadend = function() 
-            {
-                const base64data = reader.result.split(",")[1];
-                const data = 'data:image/jpeg;base64,' + atob(base64data);
-                console.log (data);
-                imageRef.current.src = data; 
-            };
-    
-            reader.readAsDataURL(blob);
-        };
-    
-        ws.onerror = (error) => {
-            console.error('WebSocket Error: ', error);
-        };
-    
-        ws.onclose = (event) => {
-            if (event.wasClean) {
-                console.log(`Closed cleanly, code=${event.code}, reason=${event.reason}`);
-            } else {
-                console.error(`Connection died`);
-            }
-        };
-    
-        return () => {
-            ws.close();
-        }
-    }, []); 
+        const id = setInterval(() => {
+            setYaw(prevYaw => prevYaw + yawIncrement);
+            setPitch(prevPitch => prevPitch + pitchIncrement);
+            setRoll(prevRoll => prevRoll + rollIncrement);
+        }, 10); 
 
+        return () => clearInterval(id); 
+    }, []);
 
     return (
         <main style={pageStyles}>
             <h1 style={headingStyles}>BOBOT</h1>
-            <h2>Image</h2>
-            <img ref={imageRef} />
+            {/* <Streamer /> */}
+            <SphereRotation yaw={yaw} pitch={pitch} roll={roll} />
         </main>
     );
 };
